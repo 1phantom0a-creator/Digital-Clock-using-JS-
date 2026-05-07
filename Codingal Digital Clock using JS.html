@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Digital Clock🕐</title>
+    </head>
+    <body onload="time()">
+        <h1>Digital Clock🕐</h1>
+        <div id="clock" style="font-size: 2em;"></div>
+
+<script>
+function time() {
+    var date = new Date();
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var miliseconds = date.getMilliseconds();
+    var session = "AM";
+    if (hours == 0) {
+        hours = 12;
+    }
+    if (hours > 12) {
+        hours = hours - 12;
+        session = "PM";
+    }
+    // Add leading zeros
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+ miliseconds = (miliseconds < 10) ? "00" + miliseconds : (miliseconds < 100) ? "0" + miliseconds : miliseconds;
+    var currentTime = hours + ":" + minutes + ":" + seconds + ":" + miliseconds + ":" + session;
+    document.getElementById("clock").innerText = currentTime;
+
+    // Update the clock every second
+    setTimeout(time, 1);
+}
+</script>
+    </body>
+</html>
