@@ -1,75 +1,116 @@
+<!DOCTYPE html>
 <html>
-    <head>
-        <title>Digital Clock🕐</title>
-        <style>
-            body {
-                /* Light blue background */
-                background-color: #ADD8E6; 
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                margin: 0;
-                font-family: 'Courier New', Courier, monospace;
-            }
+<head>
+    <title>Analog Clock with Numbers 🕒</title>
+    <style>
+        body {
+            background-color: #ADD8E6; /* Light Blue */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+        }
 
-            h1 {
-                color: #444;
-            }
+        .clock {
+            width: 350px;
+            height: 350px;
+            background-color: #333; /* Dark face */
+            border: 10px solid #FFD700; /* Yellow/Gold border */
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
 
-            #clock {
-                /* Yellow text */
-                color: #FFFF00; 
-                font-size: 5em;
-                font-weight: bold;
-                /* Added a dark shadow to make the yellow easier to read on light blue */
-                text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.5);
-                background-color: #333; /* Dark box to make it look like a real digital screen */
-                padding: 20px 40px;
-                border-radius: 15px;
-                border: 5px solid #FFD700;
-            }
-        </style>
-    </head>
-    <body onload="time()">
-        <h1>Digital Clock🕐</h1>
-        <div id="clock"></div>
+        /* Number styling */
+        .number {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFFF00; /* Yellow Numbers */
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
-<script>
-function time() {
-    var date = new Date();
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var seconds = date.getSeconds();
-    var miliseconds = date.getMilliseconds();
-    var session = "AM";
-    
-    if (hours == 0) {
-        hours = 12;
-    }
-    if (hours > 12) {
-        hours = hours - 12;
-        session = "PM";
-    }
-    
-    // Add leading zeros
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    
-    if (miliseconds < 10) {
-        miliseconds = "00" + miliseconds;
-    } else if (miliseconds < 100) {
-        miliseconds = "0" + miliseconds;
-    }
+        /* The center dot */
+        .clock::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #FFD700;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
 
-    var currentTime = hours + ":" + minutes + ":" + seconds + ":" + miliseconds + " " + session;
-    document.getElementById("clock").innerText = currentTime;
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            background-color: #FFFF00; /* Yellow Hands */
+            border-radius: 10px;
+            transform: translateX(-50%) rotate(0deg);
+        }
 
-    // Update frequently for smooth milliseconds
-    setTimeout(time, 1);
-}
-</script>
-    </body>
+        .hour { width: 8px; height: 70px; z-index: 3; }
+        .minute { width: 5px; height: 110px; z-index: 4; }
+        .second { width: 2px; height: 130px; background-color: #FF4500; z-index: 5; }
+    </style>
+</head>
+<body>
+
+    <div class="clock" id="clock">
+        <!-- Hands -->
+        <div id="hour-hand" class="hand hour"></div>
+        <div id="min-hand" class="hand minute"></div>
+        <div id="sec-hand" class="hand second"></div>
+    </div>
+
+    <script>
+        const clock = document.getElementById('clock');
+
+        // Create the numbers 1 to 12
+        for (let i = 1; i <= 12; i++) {
+            const number = document.createElement('div');
+            number.className = 'number';
+            
+            // Rotate the container, then rotate the text back so it stays upright
+            number.style.transform = `rotate(${i * 30}deg)`;
+            
+            const span = document.createElement('span');
+            span.innerText = i;
+            span.style.display = 'inline-block';
+            span.style.transform = `rotate(-${i * 30}deg)`; 
+            
+            number.appendChild(span);
+            clock.appendChild(number);
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const seconds = now.getSeconds();
+            const minutes = now.getMinutes();
+            const hours = now.getHours();
+
+            const secDeg = (seconds / 60) * 360;
+            const minDeg = ((minutes / 60) * 360) + ((seconds / 60) * 6);
+            const hourDeg = ((hours % 12) / 12) * 360 + ((minutes / 60) * 30);
+
+            document.getElementById('sec-hand').style.transform = `translateX(-50%) rotate(${secDeg}deg)`;
+            document.getElementById('min-hand').style.transform = `translateX(-50%) rotate(${minDeg}deg)`;
+            document.getElementById('hour-hand').style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
 </html>
